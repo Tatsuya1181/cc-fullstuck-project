@@ -10,6 +10,17 @@ app.use(morgan('dev'));
 
 const knex = require('./db/knex');
 
+app.get('/api/field', async (req, res) => {
+  try {
+    const field = await knex('field').select('*');
+    console.log(field);
+    res.status(200).json(field);
+  } catch (err) {
+    console.log(err.stack);
+    res.status(500).json({ error: `Failed to get field` });
+  }
+});
+
 app.get('/api/goal', async (req, res) => {
   try {
     const todos = await knex('goals').select('*');
