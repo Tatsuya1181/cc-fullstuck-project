@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-import viteLogo from '/vite.svg';
 import axios from 'axios';
 import './App.css';
+
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 function App() {
   const [count, setCount] = useState(0);
@@ -10,13 +11,14 @@ function App() {
   const [fields, setFields] = useState([]);
   useEffect(() => {
     try {
-      const feachFields = async () => {
+      const fetchFields = async () => {
         const res = await axios.get(`${baseUrl}/field`);
         setFields(res.data);
+        // console.log(res.data);
       };
       fetchFields();
     } catch (err) {
-      console.error('no response');
+      console.log(err);
     }
   }, []);
 
