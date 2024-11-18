@@ -17,7 +17,10 @@ function App() {
   const [tasks, setTasks] = useState([]);
   const [notes, setNotes] = useState([]);
   const [date, setDate] = useState();
-  const [selectedDateRange, setSelectedDateRange] = useState({});
+  const [selectedDateRange, setSelectedDateRange] = useState({
+    start: null,
+    end: null,
+  });
   const [currentView, setCurrentView] = useState('week');
 
   // 接続確認
@@ -27,6 +30,7 @@ function App() {
       const fetchFields = async () => {
         const res = await axios.get(`${baseUrl}/field`);
         setFields(res.data);
+        // console.log(res.data);
       };
       fetchFields();
     } catch (err) {
@@ -34,60 +38,69 @@ function App() {
     }
   }, []);
 
-  // useEffect(() => {
-  //   try {
-  //     const fetchGoals = async () => {
-  //       const res = await axios.get(`${baseUrl}/goal`);
-  //       setFields(res.data);
-  //       // console.log(res.data);
-  //     };
-  //     fetchGoals();
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // }, []);
-
-  // useEffect(() => {
-  //   try {
-  //     const fetchTasks = async () => {
-  //       const res = await axios.get(`${baseUrl}/task`);
-  //       setFields(res.data);
-  //       // console.log(res.data);
-  //     };
-  //     fetchTasks();
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // }, []);
-
-  // useEffect(() => {
-  //   try {
-  //     const fetchTasks = async () => {
-  //       const res = await axios.get(`${baseUrl}/note`);
-  //       setFields(res.data);
-  //       // console.log(res.data);
-  //     };
-  //     fetchTasks();
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // }, []);
+  useEffect(() => {
+    try {
+      const fetchGoals = async () => {
+        const res = await axios.get(`${baseUrl}/goal`);
+        setGoals(res.data);
+        // console.log(res.data);
+      };
+      fetchGoals();
+    } catch (err) {
+      console.log(err);
+    }
+  }, []);
 
   useEffect(() => {
-    console.log(selectedDateRange);
-  }, [selectedDateRange]);
+    try {
+      const fetchTasks = async () => {
+        const res = await axios.get(`${baseUrl}/task`);
+        setTasks(res.data);
+        console.log(res.data);
+      };
+      fetchTasks();
+    } catch (err) {
+      console.log(err);
+    }
+  }, []);
 
-  //FIXME: monthタブで特定日付を選択したときに、想定挙動にならない。一回前に指定したdate→遷移前のmonthという状態遷移になってしまう。
+  useEffect(() => {
+    try {
+      const fetchNotes = async () => {
+        const res = await axios.get(`${baseUrl}/note`);
+        setNotes(res.data);
+        // console.log(res.data);
+      };
+      fetchNotes();
+    } catch (err) {
+      console.log(err);
+    }
+  }, []);
+
+  // useEffect(() => {
+  //   console.log(selectedDateRange);
+  // }, [selectedDateRange]);
+
+  // FIXME: 初期表示時に呼び出されない。。。
   const handleRangeChange = (range) => {
     if (Array.isArray(range) && range.length === 1) {
       // console.log('day');
-      setSelectedDateRange({ start: range[0], end: range[0] });
+      setSelectedDateRange({
+        start: format(range[0], 'yyyy-MM-dd'), // TODO: formatが繰り返し出現しているので要リファクタリング
+        end: format(range[0], 'yyyy-MM-dd'),
+      });
     } else if (Array.isArray(range) && range.length !== 1) {
       // console.log('week');
-      setSelectedDateRange({ start: range[0], end: range[range.length - 1] });
+      setSelectedDateRange({
+        start: format(range[0], 'yyyy-MM-dd'),
+        end: format(range[range.length - 1], 'yyyy-MM-dd'),
+      });
     } else if (range && range.start && range.end) {
       // console.log('month');
-      setSelectedDateRange({ start: range.start, end: range.end });
+      setSelectedDateRange({
+        start: format(range.start, 'yyyy-MM-dd'),
+        end: format(range.end, 'yyyy-MM-dd'),
+      });
     }
   };
 
@@ -103,23 +116,30 @@ function App() {
     locales,
   });
 
-  const events = [
-    {
-      title: '会議',
-      start: new Date(2024, 10, 14, 10, 0), // 年, 月(0-based), 日, 時, 分
-      end: new Date(2024, 10, 14, 12, 0),
-    },
-    {
-      title: 'ランチミーティング',
-      start: new Date(2024, 10, 15, 13, 0),
-      end: new Date(2024, 10, 15, 14, 0),
-    },
-  ];
+  const events = [];
+
+  // const events = [
+  //   {
+  //     title: '会議',
+  //     start: new Date(2024, 10, 14, 10, 0), // 年, 月(0-based), 日, 時, 分
+  //     end: new Date(2024, 10, 14, 12, 0),
+  //   },
+  //   {
+  //     title: 'ランチミーティング',
+  //     start: new Date(2024, 10, 15, 13, 0),
+  //     end: new Date(2024, 10, 15, 14, 0),
+  //   },
+  // ];
 
   return (
     <>
       <div className="App">
-        <GoalField></GoalField>
+        <GoalField
+          fields={fields}
+          goals={goals}
+          currentView={currentView}
+          selectedDateRange={selectedDateRange}
+        ></GoalField>
         <Calendar
           date={date}
           view={currentView}
@@ -135,11 +155,21 @@ function App() {
           style={{ height: 500, margin: '50px' }}
         />
         {(currentView === 'week') | (currentView === 'day') ? (
-          <TaskField></TaskField>
+          <TaskField
+            tasks={tasks}
+            selectedDateRange={selectedDateRange}
+          ></TaskField>
         ) : (
           <></>
         )}
-        {currentView === 'day' ? <NoteField></NoteField> : <></>}
+        {currentView === 'day' ? (
+          <NoteField
+            notes={notes}
+            selectedDateRange={selectedDateRange}
+          ></NoteField>
+        ) : (
+          <></>
+        )}
       </div>
     </>
   );
