@@ -50,7 +50,7 @@ export default function GoalField({
                       </li>
                     );
                   })
-              : 'No goals'}
+              : ''}
           </ul>
           <button className="add-goal" onClick={() => handleOnClick(true)}>
             +
