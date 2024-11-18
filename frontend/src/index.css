@@ -89,3 +89,23 @@ button:focus-visible {
   height: 500;
   margin: '50px';
 } */
+
+.task_header {
+  margin: 10px;
+}
+
+.task_textbox {
+  margin: 10px;
+  min-width: 480px;
+  min-height: 32px;
+}
+
+.note_header {
+  margin: 10px;
+}
+
+.note_textbox {
+  margin: 10px;
+  min-width: 480px;
+  min-height: 32px;
+}

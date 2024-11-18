@@ -23,7 +23,29 @@ app.get('/api/field', async (req, res) => {
 
 app.get('/api/goal', async (req, res) => {
   try {
-    const todos = await knex('goals').select('*');
+    const todos = await knex('goal').select('*');
+    console.log(todos);
+    res.status(200).json(todos);
+  } catch (err) {
+    console.log(err.stack);
+    res.status(500).json({ error: 'Failed to get todos' });
+  }
+});
+
+app.get('/api/task', async (req, res) => {
+  try {
+    const todos = await knex('task').select('*');
+    console.log(todos);
+    res.status(200).json(todos);
+  } catch (err) {
+    console.log(err.stack);
+    res.status(500).json({ error: 'Failed to get todos' });
+  }
+});
+
+app.get('/api/note', async (req, res) => {
+  try {
+    const todos = await knex('note').select('*');
     console.log(todos);
     res.status(200).json(todos);
   } catch (err) {
