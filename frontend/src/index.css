@@ -66,3 +66,26 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+.home {
+  padding: 1rem;
+  display: flex;
+  justify-content: flex-start;
+  background-color: #dee;
+  cursor: pointer;
+  margin-right: auto;
+}
+
+.goal-field {
+  padding: 1rem;
+  display: flex;
+  justify-content: flex-start;
+  background-color: #ffe;
+  cursor: pointer;
+  margin-right: auto;
+}
+/* NOTE: 以下の書き方だと崩れてしまう。
+.calendar {
+  height: 500;
+  margin: '50px';
+} */
